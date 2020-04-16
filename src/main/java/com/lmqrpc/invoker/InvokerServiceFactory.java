@@ -7,6 +7,8 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * lmq
+ *
+ * consumer proxy factory
  */
 public class InvokerServiceFactory {
 
