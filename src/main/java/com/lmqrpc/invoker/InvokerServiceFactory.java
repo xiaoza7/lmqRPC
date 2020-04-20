@@ -1,8 +1,12 @@
 package com.lmqrpc.invoker;
 
+import com.lmqrpc.entity.ReServiceProvider;
+import com.lmqrpc.register.RegisterHandlerZk;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -34,8 +38,8 @@ public class InvokerServiceFactory {
         //服务接口名称
         String serviceKey = targetInterface.getName();
         //获取某个接口的服务提供者列表
-       // IRegisterCenter4Invoker registerCenter4Consumer = RegisterCenter.singleton();
-       // List<ProviderService> providerServices = registerCenter4Consumer.getServiceMetaDataMap4Consume().get(serviceKey);
+        RegisterHandlerZk registerCenterForConsumer = RegisterHandlerZk.singleton();
+        List<ReServiceProvider> providerServices = registerCenterForConsumer.getServiceProviderListByServiceKeyFromZk(serviceKey);
         //根据软负载策略,从服务提供者列表选取本次调用的服务提供者
 //        ClusterStrategy clusterStrategyService = ClusterEngine.queryClusterStrategy(clusterStrategy);
 //        ProviderService providerService = clusterStrategyService.select(providerServices);
