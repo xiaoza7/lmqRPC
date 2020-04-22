@@ -2,7 +2,7 @@ package com.lmqrpc.entity;
 
 import java.io.Serializable;
 
-public class ReResponse  implements Serializable {
+public class RcResponse  implements Serializable {
 
 
 
