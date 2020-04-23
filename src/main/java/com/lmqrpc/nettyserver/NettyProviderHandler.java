@@ -2,6 +2,7 @@ package com.lmqrpc.nettyserver;
 
 
 import com.lmqrpc.entity.RcRequest;
+import com.lmqrpc.entity.RcResponse;
 import com.lmqrpc.entity.ReServiceProvider;
 import com.lmqrpc.invoker.InvokerServiceFactory;
 import com.lmqrpc.register.RegisterHandler;
@@ -61,6 +62,17 @@ public class NettyProviderHandler  extends SimpleChannelInboundHandler<RcRequest
             Method method=candidateProvider.getTargetMethod();
 
            result=method.invoke(candidateProvider,rcRequest.getArgs());
+
+           //set the response
+
+            RcResponse response=new RcResponse();
+            response.setResult(result);
+            response.setUniqueId(rcRequest.getUniqueId());
+            response.setTimeout(timeout);
+            //return the result
+            ctx.writeAndFlush(response);
+
+
 
 
 
