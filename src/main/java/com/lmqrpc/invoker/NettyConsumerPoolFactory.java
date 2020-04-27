@@ -148,6 +148,12 @@ public class NettyConsumerPoolFactory {
     }
 
 
+    public ArrayBlockingQueue<Channel> acquire(InetSocketAddress socketAddress) {
+        return channelpoolMap.get(socketAddress);
+    }
+
+
+
 
 
 
