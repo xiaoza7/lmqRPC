@@ -24,17 +24,17 @@ public class RcResponse  implements Serializable {
         this.result = result;
     }
 
-    public int getTimeout() {
+    public long getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
 
     private Object result;
 
-    private int timeout;
+    private long timeout;
 
 
 

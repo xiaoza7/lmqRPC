@@ -1,5 +1,6 @@
 package com.lmqrpc.invoker;
 
+import com.lmqrpc.entity.InvokerResponseHolder;
 import com.lmqrpc.entity.RcResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -19,7 +20,7 @@ public class NettyConsumerHandler  extends SimpleChannelInboundHandler<RcRespons
         ctx.close();
     }
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, RcResponse rcResponse) throws Exception {
-
+            InvokerResponseHolder.putResultValue(rcResponse);
     }
 
 

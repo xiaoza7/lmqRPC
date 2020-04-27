@@ -47,11 +47,11 @@ public class RcRequest {
         this.webappName = webappName;
     }
 
-    public int getTimeout() {
+    public long getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
 
@@ -61,8 +61,8 @@ public class RcRequest {
 
     private String webappName;
 
-    //jdfk
-    private int timeout;
+    //
+    private long timeout;
 
 
 }

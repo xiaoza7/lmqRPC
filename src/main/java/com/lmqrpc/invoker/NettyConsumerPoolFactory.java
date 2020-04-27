@@ -13,6 +13,8 @@ import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -21,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 public class NettyConsumerPoolFactory {
+
+    private static final Logger log= LoggerFactory.getLogger(NettyConsumerPoolFactory.class);
 
     public static NettyConsumerPoolFactory nettyConsumerPoolFactory=new NettyConsumerPoolFactory();
 
@@ -54,6 +58,7 @@ public class NettyConsumerPoolFactory {
         for (ReServiceProvider serviceMetaData : serviceProviderList) {
             String serviceIp = serviceMetaData.getProviderIp();
             int servicePort = serviceMetaData.getProviderPort();
+            log.info("the serviceIp is: "+serviceIp+"; the port is : "+servicePort);
 
             InetSocketAddress socketAddress = new InetSocketAddress(serviceIp, servicePort);
             socketAddressSet.add(socketAddress);
@@ -73,7 +78,7 @@ public class NettyConsumerPoolFactory {
                     realChannelConnectSize++;
 
                     //将新注册的Netty Channel存入阻塞队列channelArrayBlockingQueue
-                    // 并将阻塞队列channelArrayBlockingQueue作为value存入channelPoolMap
+                    // 并将阻塞队列channelArrayBlockingQueue作为value存入channelPoolMap, 类似于连接池，这里以chanel作为多个连接
                     ArrayBlockingQueue<Channel> channelArrayBlockingQueue = channelpoolMap.get(socketAddress);
                     if (channelArrayBlockingQueue == null) {
                         channelArrayBlockingQueue = new ArrayBlockingQueue<Channel>(connectionsize);
@@ -120,15 +125,15 @@ public class NettyConsumerPoolFactory {
             final CountDownLatch connectedLatch = new CountDownLatch(1);
 
             final List<Boolean> isSuccessHolder = Lists.newArrayListWithCapacity(1);
-            //监听Channel是否建立成功
+
             channelFuture.addListener(new ChannelFutureListener() {
 
                 public void operationComplete(ChannelFuture future) throws Exception {
-                    //若Channel建立成功,保存建立成功的标记
+                    //若Channel成功,保存成功的标记
                     if (future.isSuccess()) {
                         isSuccessHolder.add(Boolean.TRUE);
                     } else {
-                        //若Channel建立失败,保存建立失败的标记
+                        //若Channel失败,保存失败的标记
                         future.cause().printStackTrace();
                         isSuccessHolder.add(Boolean.FALSE);
                     }
@@ -137,7 +142,7 @@ public class NettyConsumerPoolFactory {
             });
 
             connectedLatch.await();
-            //如果Channel建立成功,返回新建的Channel
+            //如果Channel建返回新建的Channel
             if (isSuccessHolder.get(0)) {
                 return newChannel;
             }
@@ -151,6 +156,33 @@ public class NettyConsumerPoolFactory {
     public ArrayBlockingQueue<Channel> acquire(InetSocketAddress socketAddress) {
         return channelpoolMap.get(socketAddress);
     }
+
+
+    public void releaseChannel(ArrayBlockingQueue<Channel>queue, Channel channel, InetSocketAddress inetSocketAddress)
+    {
+
+        if(queue==null)
+        {
+            return;
+        }
+        //回收之前先检查channel是否可用,不可用的话,重新注册一个,放入阻塞队列
+        if (channel == null || !channel.isActive() || !channel.isOpen() || !channel.isWritable()) {
+            if (channel != null) {
+                channel.deregister().syncUninterruptibly().awaitUninterruptibly();
+                channel.closeFuture().syncUninterruptibly().awaitUninterruptibly();
+            }
+            Channel newChannel = null;
+            while (newChannel == null) {
+                log.debug("---------register new Channel-------------");
+                newChannel = registerChannel(inetSocketAddress);
+            }
+            queue.offer(newChannel);
+            return;
+        }
+        queue.offer(channel);
+
+    }
+
 
 
 
