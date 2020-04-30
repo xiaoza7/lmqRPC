@@ -43,7 +43,7 @@ public class NettyConsumerPoolFactory {
     }
 
 
-    public void initChannelPoolFactory(HashMap<String, List<ReServiceProvider>> providerMap) {
+    public void initChannelPoolFactory(ConcurrentHashMap<String, List<ReServiceProvider>> providerMap) {
         //将服务提供者信息存入serviceMetaDataList列表
         Collection<List<ReServiceProvider>> collectionServiceMetaDataList = providerMap.values();
         for (List<ReServiceProvider> serviceMetaDataModels : collectionServiceMetaDataList) {

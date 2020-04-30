@@ -2,14 +2,17 @@ package com.lmqrpc.BeanDefinitionRegistrar;
 
 
 import com.lmqrpc.entity.ReServiceProvider;
+import com.lmqrpc.invoker.NettyConsumerPoolFactory;
 import com.lmqrpc.register.RegisterHandlerZk;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MyLmqRpcFactoryBean implements FactoryBean {
@@ -29,6 +32,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
         Class []clazz= new Class[]{this.clazz};
                Object  proxy=  Proxy.newProxyInstance(getClass().getClassLoader(),clazz, new InvocationHandler() {
 
+                   private volatile boolean initflag=false;
                    public void initNettyProxy()
                    {
                        //初始化netty 客户端
@@ -38,7 +42,16 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                        registerCenterConsumer.initServiceProviderList(remoteAppKey, groupName);
 
                        //初始化Netty Channel
-                       Map<String, List<ReServiceProvider>> providerMap = registerCenterConsumer.getServiceProviderListFromZk();
+                       ConcurrentHashMap<String, List<ReServiceProvider>> providerMap = registerCenterConsumer.getServiceProviderListFromZk();
+                       NettyConsumerPoolFactory nettyConsumerPoolFactory=NettyConsumerPoolFactory.getSingleton();
+                       nettyConsumerPoolFactory.initChannelPoolFactory(providerMap);
+
+                       synchronized(this.getClass()){
+                           initflag=true;
+                       }
+
+
+
                    }
 
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -46,7 +59,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
 
                 System.out.println("in proxy");
 
-              
+
                // if (MapUtils.isEmpty(providerMap)) {
              //       throw new RuntimeException("service provider list is empty.");
              //   }
