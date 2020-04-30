@@ -18,6 +18,11 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.Map;
 import java.util.Set;
 
+/*
+lmq
+ */
+
+
 public class LmqRpcImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, BeanFactoryAware {
 
 
@@ -28,7 +33,7 @@ public class LmqRpcImportBeanDefinitionRegistrar implements ImportBeanDefinition
 
     private static Logger log=LoggerFactory.getLogger(LmqRpcImportBeanDefinitionRegistrar.class);
 
-    @Override
+
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         /**
          * 得到bd,或者类信息，这里对于接口类，假设实现创建代理对象,
@@ -63,12 +68,12 @@ public class LmqRpcImportBeanDefinitionRegistrar implements ImportBeanDefinition
        }
     }
 
-    @Override
+
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
           this.beanFactory=beanFactory;
     }
 
-    @Override
+
     public void setResourceLoader(ResourceLoader resourceLoader) {
             this.resourceLoader=resourceLoader;
     }

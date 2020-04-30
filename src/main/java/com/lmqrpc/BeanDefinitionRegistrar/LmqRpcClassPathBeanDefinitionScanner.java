@@ -19,6 +19,11 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/*
+lmq
+ */
+
+
 public class LmqRpcClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
 {
 

@@ -46,6 +46,10 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
 
     }
 
+    public ConcurrentHashMap<String, List<ReServiceProvider>>getServiceProviderListFromZk()
+    {
+        return  serviceMetaDataMapToConsumers;
+    }
     public String register(List<ReServiceProvider> providers) {
 
         if (providers==null) {
