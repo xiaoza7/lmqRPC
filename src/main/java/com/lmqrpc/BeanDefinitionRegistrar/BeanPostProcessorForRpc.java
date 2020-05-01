@@ -32,11 +32,21 @@ public class BeanPostProcessorForRpc implements BeanPostProcessor {
      * @throws BeansException
      */
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+//        int serverPort();
+//        String appKey();
+//        long timeout();
+//        String groupName()
+         Class<?>c=bean.getClass();
+        if(c.isAnnotationPresent(RpcService.class)) {
+            RpcService myAnno=c.getAnnotation(RpcService.class);
+            int serverPort=myAnno.serverPort();
+            String appKey=myAnno.appKey();
+            long timeout=myAnno.timeout();
+            String groupname=myAnno.groupName();
 
 
-        if(bean.getClass().isAnnotationPresent(RpcService.class)) {
 
-       System.out.println("after initialization! this is test based on annotations------------------------>");
+            System.out.println("after initialization! this is test based on annotations------------------------>");
 
 
 

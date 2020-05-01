@@ -9,4 +9,10 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 public @interface RpcService {
     String[] value() default {};
+
+
+        int serverPort();
+        String appKey();
+        long timeout();
+        String groupName();
 }
