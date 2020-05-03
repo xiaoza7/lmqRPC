@@ -13,6 +13,11 @@ public class ConsumerRegisterZkImpl implements  ConsumerRegister {
 
     }
 
+    @Override
+    public void initServiceProviderList(String Servicekey, String groupName) {
+
+    }
+
     public void initServiceProviderList(String Servicekey) {
 
     }

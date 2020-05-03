@@ -42,6 +42,10 @@ public class NettyConsumerPoolFactory {
         return nettyConsumerPoolFactory;
     }
 
+    public ConcurrentHashMap<InetSocketAddress, ArrayBlockingQueue<Channel>> getchannelpoolMap()
+    {
+        return channelpoolMap;
+    }
 
     public void initChannelPoolFactory(ConcurrentHashMap<String, List<ReServiceProvider>> providerMap) {
         //将服务提供者信息存入serviceMetaDataList列表

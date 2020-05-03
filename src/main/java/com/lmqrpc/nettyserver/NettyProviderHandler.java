@@ -37,7 +37,7 @@ public class NettyProviderHandler  extends SimpleChannelInboundHandler<RcRequest
             String serviceClasskey=reServiceProvider.getTargetClass().getName();
 
             String methodName=rcRequest.getTargetMethodName();
-            int timeout=rcRequest.getTimeout();
+            long timeout=rcRequest.getTimeout();
             RegisterHandler registerHandlerZk=RegisterHandlerZk.singleton();
 
             // for providers, get its' local providers
