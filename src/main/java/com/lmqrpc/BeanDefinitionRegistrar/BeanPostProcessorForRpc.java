@@ -1,6 +1,9 @@
 package com.lmqrpc.BeanDefinitionRegistrar;
 
 import com.lmqrpc.entity.RpcService;
+import com.lmqrpc.providerworkers.NettyProviderRegisterObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
@@ -13,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BeanPostProcessorForRpc implements BeanPostProcessor {
 
-
+    private static Logger log= LoggerFactory.getLogger(BeanPostProcessorForRpc.class);
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 //       if(beanName.equals("lmqService"))
 //       {
@@ -43,9 +46,15 @@ public class BeanPostProcessorForRpc implements BeanPostProcessor {
             String appKey=myAnno.appKey();
             long timeout=myAnno.timeout();
             String groupname=myAnno.groupName();
+            //
+            NettyProviderRegisterObject nettyProviderRegisterObject=new NettyProviderRegisterObject(c,bean,serverPort,timeout,appKey,groupname);
+            try {
+                nettyProviderRegisterObject.afterPropertiesSetToRegister();
 
-
-
+            }catch(Exception e)
+            {
+                log.info("when register a providerservice, the exception info is---------------> "+e.getMessage());
+            }
             System.out.println("after initialization! this is test based on annotations------------------------>");
 
 

@@ -55,6 +55,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
         if (providers==null) {
             return "empty";
         }
+        log.info("begin register service provider..................");
 
         //连接zk,注册服务
         synchronized (RegisterHandlerZk.class) {
@@ -102,6 +103,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
                 if (!exist) {
                     //注意,这里创建的是临时节点
                     zkClient.createEphemeral(currentServiceIpNode);
+                    log.info("begin register service provider..................");
                 }
 
                 //监听注册服务的变化,同时更新数据到本地缓存
@@ -120,6 +122,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
                         }
 
                      refreshActiveService(activityServiceIpList);
+                        log.info(" register service provider success..................");
                     }
                 });
 
