@@ -54,6 +54,7 @@ public class InvokerServiceCallable implements Callable<RcResponse> {
 
             //从返回结果容器中获取返回结果,同时设置等待超时时间为invokeTimeout
             long invokeTimeout = request.getTimeout();
+            logger.info("get the response from InvokerResponseHolder----->, the res is : "+InvokerResponseHolder.getValue(request.getUniqueId(), invokeTimeout));
             return InvokerResponseHolder.getValue(request.getUniqueId(), invokeTimeout);
         } catch (Exception e) {
             logger.error("service invoke error.", e);

@@ -98,6 +98,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                 RcRequest rcRequest=new RcRequest();
                 rcRequest.setArgs(args);
                 rcRequest.setTargetMethodName(method.getName());
+                //仍需完善
                 InvokerServiceCallable invokerServiceCallable=new InvokerServiceCallable(address,rcRequest);
 
 

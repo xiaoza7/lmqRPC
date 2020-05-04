@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.lmqrpc.entity.ReServiceConsumer;
 import com.lmqrpc.entity.ReServiceProvider;
 import com.lmqrpc.invokerservice.ConsumerRegister;
+import com.lmqrpc.utils.IPUtils;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.serialize.SerializableSerializer;
@@ -97,7 +98,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
                 int serverPort = entry.getValue().get(0).getProviderPort();//服务端口
                 int weight = entry.getValue().get(0).getWeight();//服务权重
                 int workerThreads = entry.getValue().get(0).getWorkerThreads();//服务工作线程
-                String localIp = zkService;
+                String localIp = IPUtils.localIp();
                 String currentServiceIpNode = servicePath + "/" + localIp + "|" + serverPort + "|" + weight + "|" + workerThreads + "|" + groupName;
                 exist = zkClient.exists(currentServiceIpNode);
                 if (!exist) {
@@ -193,7 +194,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
             }
 
             //创建当前服务器节点
-            String localIp =zkService ;
+            String localIp =IPUtils.localIp() ;
             String currentServiceIpNode = servicePath + "/" + localIp;
             exist = zkClient.exists(currentServiceIpNode);
             if (!exist) {
@@ -289,6 +290,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
                 ReServiceProvider providerService = new ReServiceProvider();
 
                 try {
+                    log.info("in the end of consumer, when get providerservice from zk, begin  load the class info ,the class is: "+serviceName);
                     providerService.setTargetClass(ClassUtils.getClass(serviceName));
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);

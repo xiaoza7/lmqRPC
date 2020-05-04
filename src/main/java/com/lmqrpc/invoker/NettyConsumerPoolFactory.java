@@ -48,6 +48,8 @@ public class NettyConsumerPoolFactory {
     }
 
     public void initChannelPoolFactory(ConcurrentHashMap<String, List<ReServiceProvider>> providerMap) {
+
+        log.info("enter the initChannelPoolFactory for consumer cli, when invoke a method!!!!!!");
         //将服务提供者信息存入serviceMetaDataList列表
         Collection<List<ReServiceProvider>> collectionServiceMetaDataList = providerMap.values();
         for (List<ReServiceProvider> serviceMetaDataModels : collectionServiceMetaDataList) {
