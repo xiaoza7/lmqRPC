@@ -55,14 +55,29 @@ public class LmqRpcImportBeanDefinitionRegistrar implements ImportBeanDefinition
              //sbd.getMetadata().getClassName()
            log.info("when regsiter a new rpc class, the bean name is: "+bdh.getBeanClassName());
            System.out.println("when regsiter a new rpc class, the bean name is: "+bdh.getBeanClassName());
-           // BeanDefinitionBuilder beanDefinitionBuilder= BeanDefinitionBuilder.genericBeanDefinition(userMapper.getClass()); //实际无法获取代理类信息，使用factorybean
-           BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(bdh.getBeanClassName());
-           GenericBeanDefinition beanDefinition = (GenericBeanDefinition) beanDefinitionBuilder.getBeanDefinition();
+           try {
+               String canclassname=bdh.getBeanClassName();
+               Class<?> a1 = Class.forName(canclassname);
 
-           //为了传参数，可以给bd添加构造函数
-           beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(bdh.getBeanClassName());
-           beanDefinition.setBeanClass(MyLmqRpcFactoryBean.class); //MyFactoryBean不能加Componenrt注解
-           registry.registerBeanDefinition(bdh.getBeanClassName(), beanDefinition);
+               Class a2 = a1.getInterfaces()[0];
+               if(a2!=null)
+               {
+                   //父类接口很重要，为了和服务提供者的类名一致
+                   canclassname=a2.getName();
+               }
+
+               // BeanDefinitionBuilder beanDefinitionBuilder= BeanDefinitionBuilder.genericBeanDefinition(userMapper.getClass()); //实际无法获取代理类信息，使用factorybean
+               BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(canclassname);
+               GenericBeanDefinition beanDefinition = (GenericBeanDefinition) beanDefinitionBuilder.getBeanDefinition();
+
+               //为了传参数，可以给bd添加构造函数
+               beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(canclassname);
+               beanDefinition.setBeanClass(MyLmqRpcFactoryBean.class); //MyFactoryBean不能加Componenrt注解
+               registry.registerBeanDefinition(canclassname, beanDefinition);
+           }catch (Exception e)
+           {
+               e.printStackTrace();
+           }
 
 
        }
