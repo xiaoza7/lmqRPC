@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
 
-    private static String APPKEY_PATH = "/config_register";
+    private static String APPKEY_PATH = "/zk_register";
     public static String PROVIDER_TYPE = "provider";
     public static String INVOKER_TYPE = "consumer";
 

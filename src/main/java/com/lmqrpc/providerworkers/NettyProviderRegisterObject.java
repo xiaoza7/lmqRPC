@@ -62,14 +62,15 @@ public class NettyProviderRegisterObject {
 
 
     public void afterPropertiesSetToRegister() throws Exception {
-        //启动Netty服务端
-        NettyServerFactory.singleton().startServer(serverPort);
+
 
         //注册到zk,元数据注册中心
         List<ReServiceProvider> providerServiceList = buildProviderServiceInfos();
         RegisterHandler registerCenterForProvider = RegisterHandlerZk.singleton();
         registerCenterForProvider.register(providerServiceList);
         logger.info("afterPropertiesSetToRegister end-------------->");
+        //启动Netty服务端
+        NettyServerFactory.singleton().startServer(serverPort);
     }
 
 
