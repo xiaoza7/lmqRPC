@@ -61,7 +61,7 @@ public class LmqRpcImportBeanDefinitionRegistrar implements ImportBeanDefinition
                Class<?> a1 = Class.forName(canclassname);
 
                Class a2[] = a1.getInterfaces();
-               if(a2!=null)
+               if(a2.length>0)
                {
                    //父类接口很重要，为了和服务提供者的类名一致
                    canclassname=a2[0].getName();
