@@ -1,10 +1,8 @@
 package com.lmqrpc.BeanDefinitionRegistrar;
 
 
-import com.lmqrpc.entity.InvokerServiceCallable;
-import com.lmqrpc.entity.RcRequest;
-import com.lmqrpc.entity.ReServiceConsumer;
-import com.lmqrpc.entity.ReServiceProvider;
+import com.alibaba.fastjson.JSON;
+import com.lmqrpc.entity.*;
 import com.lmqrpc.invoker.NettyConsumerPoolFactory;
 import com.lmqrpc.register.RegisterHandlerZk;
 import io.netty.channel.Channel;
@@ -17,34 +15,45 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+
+/*
+lmq
+ */
 
 
 public class MyLmqRpcFactoryBean implements FactoryBean {
     Class clazz;
      String remoteAppKey;
      String groupName;
-    public MyLmqRpcFactoryBean(Class clazz,String remoteAppKey,String groupName)
+    public MyLmqRpcFactoryBean(Class clazz)
     {
         this.clazz=clazz;
-        this.remoteAppKey=remoteAppKey;
-        this.groupName=groupName;
+
     }
 
 
     public Object getObject() throws Exception {
 
-        Class []clazz= new Class[]{this.clazz};
+        final Class []clazz= new Class[]{this.clazz};
                Object  proxy=  Proxy.newProxyInstance(getClass().getClassLoader(),clazz, new InvocationHandler() {
 
                    private volatile boolean initflag=false;
                    NettyConsumerPoolFactory nettyConsumerPoolFactory=NettyConsumerPoolFactory.getSingleton();
+                   RegisterHandlerZk registerCenterConsumer = RegisterHandlerZk.singleton();
+                   String remoteAppKey;
+                   String groupName;
                    public void initNettyProxy() throws Exception
                    {
+                       //根据class上面的注解获取注解属性value
+                       RpcService myAnno= (RpcService) clazz[0].getAnnotation(RpcService.class);
+                        remoteAppKey=myAnno.appKey();
+                        groupName=myAnno.groupName();
+                        System.out.println("from RpcService annotation, the remotekey is "+remoteAppKey+"the groupname is: "+groupName);
                        //初始化netty 客户端
                        //获取服务注册中心
-                       RegisterHandlerZk registerCenterConsumer = RegisterHandlerZk.singleton();
                        //初始化服务提供者列表到本地缓存
                        registerCenterConsumer.initServiceProviderList(remoteAppKey, groupName);
 
@@ -85,70 +94,32 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                  InetSocketAddress address=null;
                  ArrayBlockingQueue<Channel>queue=null;
 
-                for (Map.Entry<InetSocketAddress, ArrayBlockingQueue<Channel>> entry : nettyConsumerPoolFactory.getchannelpoolMap().entrySet()) {
-                       address=entry.getKey();
-                       queue=entry.getValue();
-                       if(i==0)
-                       {
-                           break;
-                       }
-                       i++;
-
+                //nettyConsumerPoolFactory.
+                String servicekey=proxy.getClass().getName();
+                System.out.println("in proxy, the servicekey is.................>"+ servicekey);
+                List<ReServiceProvider>canlist=registerCenterConsumer.getRegisterList(servicekey);
+                //假设取第一个，先不考虑负载均衡
+                if(canlist.size()==0)
+                {
+                    System.out.println("in proxy, when get the serviceprovider list ,the res list size is 0,and.................>"+ servicekey);
                 }
+
+                ReServiceProvider reServiceProvider=canlist.get(0);
+                System.out.println("the chosed serviceprovider is ------------>:"+ JSON.toJSONString(reServiceProvider));
                 RcRequest rcRequest=new RcRequest();
+                rcRequest.setProvider(reServiceProvider);
+                rcRequest.setUniqueId(UUID.randomUUID().toString() + "-" + Thread.currentThread().getId());
                 rcRequest.setArgs(args);
                 rcRequest.setTargetMethodName(method.getName());
-               // rcRequest.setProvider();
+                rcRequest.setTimeout(6000);
+                //根据服务提供者的ip,port,构建InetSocketAddress对象,标识服务提供者地址
+                String serverIp = rcRequest.getProvider().getProviderIp();
+                int serverPort = rcRequest.getProvider().getProviderPort();
+                InetSocketAddress inetSocketAddress = new InetSocketAddress(serverIp, serverPort);
                 //仍需完善
-                InvokerServiceCallable invokerServiceCallable=new InvokerServiceCallable(address,rcRequest);
-
-
+                InvokerServiceCallable invokerServiceCallable=new InvokerServiceCallable(inetSocketAddress,rcRequest);
 
                 return invokerServiceCallable.call();
-
-
-                //根据软负载策略,从服务提供者列表选取本次调用的服务提供者
-//        ClusterStrategy clusterStrategyService = ClusterEngine.queryClusterStrategy(clusterStrategy);
-//        ProviderService providerService = clusterStrategyService.select(providerServices);
-//        //复制一份服务提供者信息
-//        ProviderService newProvider = providerService.copy();
-//        //设置本次调用服务的方法以及接口
-//        newProvider.setServiceMethod(method);
-//        newProvider.setServiceItf(targetInterface);
-//
-//        //声明调用AresRequest对象,AresRequest表示发起一次调用所包含的信息
-//        final AresRequest request = new AresRequest();
-//        //设置本次调用的唯一标识
-//        request.setUniqueKey(UUID.randomUUID().toString() + "-" + Thread.currentThread().getId());
-//        //设置本次调用的服务提供者信息
-//        request.setProviderService(newProvider);
-//        //设置本次调用的超时时间
-//        request.setInvokeTimeout(consumeTimeout);
-//        //设置本次调用的方法名称
-//        request.setInvokedMethodName(method.getName());
-//        //设置本次调用的方法参数信息
-//        request.setArgs(args);
-//
-//        try {
-//            //构建用来发起调用的线程池
-//            if (fixedThreadPool == null) {
-//                synchronized (RevokerProxyBeanFactory.class) {
-//                    if (null == fixedThreadPool) {
-//                        fixedThreadPool = Executors.newFixedThreadPool(threadWorkerNumber);
-//                    }
-//                }
-//            }
-//            //根据服务提供者的ip,port,构建InetSocketAddress对象,标识服务提供者地址
-//            String serverIp = request.getProviderService().getServerIp();
-//            int serverPort = request.getProviderService().getServerPort();
-//            InetSocketAddress inetSocketAddress = new InetSocketAddress(serverIp, serverPort);
-//            //提交本次调用信息到线程池fixedThreadPool,发起调用
-//            Future<AresResponse> responseFuture = fixedThreadPool.submit(RevokerServiceCallable.of(inetSocketAddress, request));
-//            //获取调用的返回结果
-//            AresResponse response = responseFuture.get(request.getInvokeTimeout(), TimeUnit.MILLISECONDS);
-//            if (response != null) {
-//                return response.getResult();
-//            }
 
             }
         });

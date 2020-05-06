@@ -69,7 +69,7 @@ public class NettyProviderRegisterObject {
         List<ReServiceProvider> providerServiceList = buildProviderServiceInfos();
         RegisterHandler registerCenterForProvider = RegisterHandlerZk.singleton();
         registerCenterForProvider.register(providerServiceList);
-        logger.info("");
+        logger.info("afterPropertiesSetToRegister end-------------->");
     }
 
 
