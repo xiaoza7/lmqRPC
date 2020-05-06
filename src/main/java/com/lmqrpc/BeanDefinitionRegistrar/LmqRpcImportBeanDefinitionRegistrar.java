@@ -15,6 +15,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,11 +60,11 @@ public class LmqRpcImportBeanDefinitionRegistrar implements ImportBeanDefinition
                String canclassname=bdh.getBeanClassName();
                Class<?> a1 = Class.forName(canclassname);
 
-               Class a2 = a1.getInterfaces()[0];
+               Class a2[] = a1.getInterfaces();
                if(a2!=null)
                {
                    //父类接口很重要，为了和服务提供者的类名一致
-                   canclassname=a2.getName();
+                   canclassname=a2[0].getName();
                }
 
                // BeanDefinitionBuilder beanDefinitionBuilder= BeanDefinitionBuilder.genericBeanDefinition(userMapper.getClass()); //实际无法获取代理类信息，使用factorybean
