@@ -39,7 +39,7 @@ public class NettyProviderHandler  extends SimpleChannelInboundHandler<RcRequest
             String methodName=rcRequest.getTargetMethodName();
             long timeout=rcRequest.getTimeout();
             RegisterHandler registerHandlerZk=RegisterHandlerZk.singleton();
-
+            log.info(" when netty server handler process, the resquest's methodname is ........."+methodName);
             // for providers, get its' local providers
             List<ReServiceProvider> serviceProviderList=((RegisterHandlerZk) registerHandlerZk).getServiceProviderListByServiceKeyFromZk(serviceClasskey);
 
@@ -61,7 +61,7 @@ public class NettyProviderHandler  extends SimpleChannelInboundHandler<RcRequest
 
             Method method=candidateProvider.getTargetMethod();
 
-           result=method.invoke(candidateProvider,rcRequest.getArgs());
+           result=method.invoke(candidateProvider.getProviderObject(),rcRequest.getArgs());
 
            //set the response
 

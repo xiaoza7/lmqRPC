@@ -3,6 +3,7 @@ package com.lmqrpc.nettyserver;
 import com.lmqrpc.entity.RcRequest;
 import com.lmqrpc.seriable.ReNettyDecoder;
 import com.lmqrpc.seriable.ReNettyEncoder;
+import com.lmqrpc.utils.IPUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -38,7 +39,7 @@ public class NettyServerFactory {
             if (bossGroup != null || workerGroup != null) {
                 return;
             }
-
+            System.out.println("begin start the netty server ");
             bossGroup = new NioEventLoopGroup();
             workerGroup = new NioEventLoopGroup();
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -55,9 +56,9 @@ public class NettyServerFactory {
             });
 
             try {
-                channel = serverBootstrap.bind(port).sync().channel();
+                channel = serverBootstrap.bind(IPUtils.localIp(),port).sync().channel();
 
-                log.info(" the netty server is started!");
+                System.out.println(" the netty server is started!");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
