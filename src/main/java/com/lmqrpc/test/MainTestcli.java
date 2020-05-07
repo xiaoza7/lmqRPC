@@ -10,7 +10,8 @@ public class MainTestcli {
         AnnotationConfigApplicationContext lmqcontext = new AnnotationConfigApplicationContext(AppConfig12.class);
 
          HelloService helloService=(HelloService) lmqcontext.getBean("com.lmqrpc.myservice.HelloService");
-         helloService.getres("this is a test");
+        String ss= helloService.getres("this is a test");
+        System.out.println("-----------------------*****************   "+ss);
 
 
     }

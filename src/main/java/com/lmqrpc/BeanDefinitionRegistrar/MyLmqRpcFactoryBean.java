@@ -16,8 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 /*
 lmq
@@ -44,6 +43,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                    RegisterHandlerZk registerCenterConsumer = RegisterHandlerZk.singleton();
                    String remoteAppKey;
                    String groupName;
+                   private ExecutorService fixedThreadPool = null;
                    public void initNettyProxy() throws Exception
                    {
                        //根据class上面的注解获取注解属性value
@@ -90,44 +90,64 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
 
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-                if(initflag==false)
-                {
+                if (initflag == false) {
                     initNettyProxy();
                 }
-                System.out.println("in proxy");
-                //发起异步调用，
-                //假设选取第一个provider的
-                 int i=0;
-                 InetSocketAddress address=null;
-                 ArrayBlockingQueue<Channel>queue=null;
 
-                //nettyConsumerPoolFactory.
-                String servicekey=clazz[0].getName();
-                System.out.println("in proxy, the servicekey is.................>"+ servicekey);
-                List<ReServiceProvider>canlist=registerCenterConsumer.getRegisterList(servicekey);
-                //假设取第一个，先不考虑负载均衡
-                if(canlist.size()==0)
-                {
-                    System.out.println("in proxy, when get the serviceprovider list ,the res list size is 0,and.................>"+ servicekey);
+                try {
+                    //构建用来发起调用的线程池
+                    if (fixedThreadPool == null) {
+                        synchronized (this.getClass()) {
+                            if (null == fixedThreadPool) {
+                                fixedThreadPool = Executors.newFixedThreadPool(10);
+                            }
+                        }
+                    }
+                    System.out.println("in proxy");
+                    //发起异步调用，
+                    //假设选取第一个provider的
+                    int i = 0;
+                    InetSocketAddress address = null;
+                    ArrayBlockingQueue<Channel> queue = null;
+
+                    //nettyConsumerPoolFactory.
+                    String servicekey = clazz[0].getName();
+                    System.out.println("in proxy, the servicekey is.................>" + servicekey);
+                    List<ReServiceProvider> canlist = registerCenterConsumer.getRegisterList(servicekey);
+                    //假设取第一个，先不考虑负载均衡
+                    if (canlist.size() == 0) {
+                        System.out.println("in proxy, when get the serviceprovider list ,the res list size is 0,and.................>" + servicekey);
+                    }
+
+                    ReServiceProvider reServiceProvider = canlist.get(0);
+                    System.out.println("the chosed serviceprovider is ------------>:" + JSON.toJSONString(reServiceProvider));
+                    RcRequest rcRequest = new RcRequest();
+                    rcRequest.setProvider(reServiceProvider);
+                    rcRequest.setUniqueId(UUID.randomUUID().toString() + "-" + Thread.currentThread().getId());
+                    rcRequest.setArgs(args);
+                    rcRequest.setTargetMethodName(method.getName());
+                    rcRequest.setTimeout(6000);
+                    //根据服务提供者的ip,port,构建InetSocketAddress对象,标识服务提供者地址
+                    String serverIp = rcRequest.getProvider().getProviderIp();
+                    int serverPort = rcRequest.getProvider().getProviderPort();
+                    InetSocketAddress inetSocketAddress = new InetSocketAddress(serverIp, serverPort);
+                    //仍需完善
+                    InvokerServiceCallable invokerServiceCallable = new InvokerServiceCallable(inetSocketAddress, rcRequest);
+                    Future<RcResponse> responseFuture = fixedThreadPool.submit(invokerServiceCallable);
+                    //获取调用的返回结果
+                    RcResponse response = responseFuture.get(rcRequest.getTimeout(), TimeUnit.MILLISECONDS);
+                    if (response != null) {
+                        System.out.println("the final re ia-------------->"+response.getResult().toString());
+                        return response.getResult();
+
+                    }
+
+                    //  return invokerServiceCallable.call();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                ReServiceProvider reServiceProvider=canlist.get(0);
-                System.out.println("the chosed serviceprovider is ------------>:"+ JSON.toJSONString(reServiceProvider));
-                RcRequest rcRequest=new RcRequest();
-                rcRequest.setProvider(reServiceProvider);
-                rcRequest.setUniqueId(UUID.randomUUID().toString() + "-" + Thread.currentThread().getId());
-                rcRequest.setArgs(args);
-                rcRequest.setTargetMethodName(method.getName());
-                rcRequest.setTimeout(6000);
-                //根据服务提供者的ip,port,构建InetSocketAddress对象,标识服务提供者地址
-                String serverIp = rcRequest.getProvider().getProviderIp();
-                int serverPort = rcRequest.getProvider().getProviderPort();
-                InetSocketAddress inetSocketAddress = new InetSocketAddress(serverIp, serverPort);
-                //仍需完善
-                InvokerServiceCallable invokerServiceCallable=new InvokerServiceCallable(inetSocketAddress,rcRequest);
-
-                return invokerServiceCallable.call();
-
+                return null;
             }
         });
     return proxy;
