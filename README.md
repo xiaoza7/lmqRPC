@@ -16,3 +16,9 @@
 
  不足：
     在服务消费时较慢，仍需完善
+
+
+测试截图：
+![Image text](https://github.com/xiaoza7/lmqRPC/blob/master/src/test/java/testservice/ma.png)
+以及
+![Image text](https://github.com/xiaoza7/lmqRPC/blob/master/src/test/java/testservice/mb.png)
