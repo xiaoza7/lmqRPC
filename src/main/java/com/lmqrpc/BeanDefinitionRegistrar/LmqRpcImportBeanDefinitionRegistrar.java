@@ -39,7 +39,7 @@ public class LmqRpcImportBeanDefinitionRegistrar implements ImportBeanDefinition
         /**
          * 得到bd,或者类信息，这里对于接口类，假设实现创建代理对象,
          */
-        //这里先写死去为某个接口去创建动态代理对象，其实可以模拟扫描注解的接口，类似mybatis的mapperscan, UserMapper是个接口
+        //这里为某个接口去创建动态代理对象，其实可以模拟扫描注解的接口，类似mybatis的mapperscan,
 
 
         //扫描注解
