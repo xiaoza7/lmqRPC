@@ -7,7 +7,7 @@
 
 运行：
 首先起本机zookeeper(port:2181),
-其中myservice包是配置service
+其中myservice包是配置service,
 运行test包的例子
 
 
