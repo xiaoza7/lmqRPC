@@ -61,7 +61,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
         //连接zk,注册服务
         synchronized (RegisterHandlerZk.class) {
             for (ReServiceProvider provider : providers) {
-                String serviceClasssKey = provider.getTargetClass().getName();
+                String serviceClasssKey = provider.getTargetClass().getInterfaces()[0].getName();
 
                 List<ReServiceProvider> providerslist = providerServiceMap.get(serviceClasssKey);
                 if (providerslist == null) {
@@ -99,7 +99,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
                 int weight = entry.getValue().get(0).getWeight();//服务权重
                 int workerThreads = entry.getValue().get(0).getWorkerThreads();//服务工作线程
                 String localIp = IPUtils.localIp();
-                String currentServiceIpNode = servicePath + "/" + localIp + "|" + serverPort + "|" + weight + "|" + workerThreads + "|" + groupName;
+                String currentServiceIpNode = servicePath + "/" + localIp + "-" + serverPort + "-" + weight + "-" + workerThreads + "-" + groupName;
                 exist = zkClient.exists(currentServiceIpNode);
                 if (!exist) {
                     //注意,这里创建的是临时节点
@@ -133,7 +133,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
     }
 
     public List<ReServiceProvider> getRegisterList(String serviceKey) {
-        return providerServiceMap.get(serviceKey);
+        return serviceMetaDataMapToConsumers.get(serviceKey);
     }
 
 
@@ -207,7 +207,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
 
     public void initServiceProviderList(String servicekey,String groupName) {
 
-        if(serviceMetaDataMapToConsumers.size()>0)
+        if(serviceMetaDataMapToConsumers.isEmpty())
         {
             serviceMetaDataMapToConsumers.putAll(fetchOrUpdateProviderServiceMetaData(servicekey,groupName));
         }
@@ -277,11 +277,11 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
             String servicePath = providePath + "/" + serviceName + "/" + PROVIDER_TYPE;
             List<String> ipPathList = zkClient.getChildren(servicePath);
             for (String ipPath : ipPathList) {
-                String serverIp = ipPath.split("|")[0];
-                String serverPort = ipPath.split("|")[1];
-                int weight = Integer.parseInt(ipPath.split("|")[2]);
-                int workerThreads = Integer.parseInt(ipPath.split("|")[3]);
-                String group = ipPath.split("|")[4];
+                String serverIp = ipPath.split("-")[0];
+                String serverPort = ipPath.split("-")[1];
+                int weight = Integer.parseInt(ipPath.split("-")[2]);
+                int workerThreads = Integer.parseInt(ipPath.split("-")[3]);
+                String group = ipPath.split("-")[4];
 
                 List<ReServiceProvider> providerServiceList = providerServiceMap.get(serviceName);
                 if (providerServiceList == null) {
@@ -315,7 +315,7 @@ public class RegisterHandlerZk implements  RegisterHandler , ConsumerRegister {
                     }
                     List<String> activityServiceIpList = new ArrayList();
                     for (int i = 0; i < currentChilds.size(); i++) {
-                        activityServiceIpList.add(currentChilds.get(i).split("|")[0]);
+                        activityServiceIpList.add(currentChilds.get(i).split("-")[0]);
 
 
                     }

@@ -26,8 +26,7 @@ lmq
 
 public class MyLmqRpcFactoryBean implements FactoryBean {
     Class clazz;
-     String remoteAppKey;
-     String groupName;
+
     public MyLmqRpcFactoryBean(Class clazz)
     {
         this.clazz=clazz;
@@ -48,7 +47,14 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                    public void initNettyProxy() throws Exception
                    {
                        //根据class上面的注解获取注解属性value
-                       RpcService myAnno= (RpcService) clazz[0].getAnnotation(RpcService.class);
+                       Class c=null;
+                       try {
+                           c=Class.forName(clazz[0].getName());
+                       }catch (Exception e)
+                       {
+                           e.printStackTrace();
+                       }
+                       LmqRPC myAnno= (LmqRPC) c.getAnnotation(LmqRPC.class);
                         remoteAppKey=myAnno.appKey();
                         groupName=myAnno.groupName();
                         System.out.println("from RpcService annotation, the remotekey is "+remoteAppKey+"the groupname is: "+groupName);
@@ -71,7 +77,8 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                      //  invoker.setServiceItf(targetInterface);
                        invoker.setRemoteAppKey(remoteAppKey);
                        invoker.setGroupName(groupName);
-                       registerCenterConsumer.registerInvoker(invoker);
+                       invoker.setServiceClass(this.getClass());
+                      // registerCenterConsumer.registerInvoker(invoker);
 
                        synchronized(this.getClass()){
                            initflag=true;
@@ -95,7 +102,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                  ArrayBlockingQueue<Channel>queue=null;
 
                 //nettyConsumerPoolFactory.
-                String servicekey=proxy.getClass().getName();
+                String servicekey=clazz[0].getName();
                 System.out.println("in proxy, the servicekey is.................>"+ servicekey);
                 List<ReServiceProvider>canlist=registerCenterConsumer.getRegisterList(servicekey);
                 //假设取第一个，先不考虑负载均衡

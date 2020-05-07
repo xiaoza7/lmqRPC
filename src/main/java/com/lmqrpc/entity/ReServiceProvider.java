@@ -1,5 +1,6 @@
 package com.lmqrpc.entity;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /**
@@ -7,7 +8,7 @@ import java.lang.reflect.Method;
  */
 
 //服务生产者注册类,这里以目标类及方法为注册的组合键,
-public class ReServiceProvider {
+public class ReServiceProvider implements Serializable {
 
  private Class<?> targetClass;
 

@@ -1,6 +1,8 @@
 package com.lmqrpc.entity;
 
-public class RcRequest {
+import java.io.Serializable;
+
+public class RcRequest implements Serializable {
 
 
     private String uniqueId;

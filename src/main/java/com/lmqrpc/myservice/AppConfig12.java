@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Import;
 
 
 @Configuration
-@ComponentScan({"com.lmqrpc.BeanDefinitionRegistrar","com.lmqrpc.myservice"})
+@ComponentScan("com.lmqrpc.myservice")
 @Import( LmqRpcImportBeanDefinitionRegistrar.class)
-public class AppConfig11 {
+public class AppConfig12 {
 
 
 
