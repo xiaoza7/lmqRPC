@@ -57,7 +57,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                        LmqRPC myAnno= (LmqRPC) c.getAnnotation(LmqRPC.class);
                         remoteAppKey=myAnno.appKey();
                         groupName=myAnno.groupName();
-                        System.out.println("from RpcService annotation, the remotekey is "+remoteAppKey+"the groupname is: "+groupName);
+                        System.out.println("from lmqRpc annotation, the remotekey is "+remoteAppKey+"the groupname is: "+groupName);
                        //初始化netty 客户端
                        //获取服务注册中心
                        //初始化服务提供者列表到本地缓存

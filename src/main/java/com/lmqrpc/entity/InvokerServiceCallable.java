@@ -41,12 +41,13 @@ public class InvokerServiceCallable implements Callable<RcResponse> {
 
             //若获取的channel通道已经不可用,则重新获取一个
             while (!channel.isOpen() || !channel.isActive() || !channel.isWritable()) {
-                logger.warn("----------retry get new Channel------------");
+              System.out.println("----------retry get new Channel------------");
                 channel = blockingQueue.poll(request.getTimeout(), TimeUnit.MILLISECONDS);
                 if (channel == null) {
                     //若队列中没有可用的Channel,则重新注册一个Channel
                     channel = NettyConsumerPoolFactory.getSingleton().registerChannel(inetSocketAddress);
                 }
+                System.out.println("----------retry get new Channel------------");
             }
 
             //将本次调用的信息写入Netty通道,发起异步调用
@@ -66,6 +67,7 @@ public class InvokerServiceCallable implements Callable<RcResponse> {
         } finally {
             //本次调用完毕后,将Netty的通道channel重新释放到队列中,以便下次调用复用
             NettyConsumerPoolFactory.getSingleton().releaseChannel(blockingQueue, channel, inetSocketAddress);
+            System.out.println("the hashcode of channle is:====> "+channel.hashCode());
         }
         return null;
     }

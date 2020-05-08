@@ -14,25 +14,25 @@ public class InvokerResponseHolder {
 
     static {
         //删除超时未获取到结果的key,防止内存泄露
-//        deleteExpiredExecutor.execute(new Runnable() {
-//
-//            public void run() {
-//                while (true) {
-//                    try {
-//                        for (Map.Entry<String, ResponseWrapper> entry : responseMap.entrySet()) {
-//                            boolean isExpire = entry.getValue().isExpire();
-//                            if (isExpire) {
-//                                responseMap.remove(entry.getKey());
-//                            }
-//                            Thread.sleep(50);
-//                        }
-//                    } catch (Throwable e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-//            }
-//        });
+        deleteExpiredExecutor.execute(new Runnable() {
+
+            public void run() {
+                while (true) {
+                    try {
+                        for (Map.Entry<String, ResponseWrapper> entry : responseMap.entrySet()) {
+                            boolean isExpire = entry.getValue().isExpire();
+                            if (isExpire) {
+                                responseMap.remove(entry.getKey());
+                            }
+                            Thread.sleep(50);
+                        }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
     }
 
     /**

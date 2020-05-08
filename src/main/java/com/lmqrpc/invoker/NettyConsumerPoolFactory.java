@@ -148,12 +148,23 @@ public class NettyConsumerPoolFactory {
             });
 
             connectedLatch.await();
+
+            //new add
+            //channelFuture.channel().closeFuture().sync();
+
+            //new add end
+
             //如果Channel建返回新建的Channel
             if (isSuccessHolder.get(0)) {
                 return newChannel;
             }
+            //new add
+
+            //new add end
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }finally {
+
         }
         return null;
     }
@@ -179,7 +190,7 @@ public class NettyConsumerPoolFactory {
             }
             Channel newChannel = null;
             while (newChannel == null) {
-                log.debug("---------register new Channel-------------");
+                System.out.println("---------register new Channel-------------");
                 newChannel = registerChannel(inetSocketAddress);
             }
             queue.offer(newChannel);

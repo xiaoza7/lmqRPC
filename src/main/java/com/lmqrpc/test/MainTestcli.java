@@ -14,7 +14,9 @@ public class MainTestcli {
              System.out.println("-----------------------*****************   " + ss);
          }
 
+       lmqcontext.close();
 
+        System.exit(0);
     }
 
 

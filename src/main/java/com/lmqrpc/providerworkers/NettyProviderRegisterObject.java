@@ -68,7 +68,7 @@ public class NettyProviderRegisterObject {
         List<ReServiceProvider> providerServiceList = buildProviderServiceInfos();
         RegisterHandler registerCenterForProvider = RegisterHandlerZk.singleton();
         registerCenterForProvider.register(providerServiceList);
-        logger.info("afterPropertiesSetToRegister end-------------->");
+       System.out.println("afterPropertiesSetToRegister end-------------->");
         //启动Netty服务端
         NettyServerFactory.singleton().startServer(serverPort);
     }
