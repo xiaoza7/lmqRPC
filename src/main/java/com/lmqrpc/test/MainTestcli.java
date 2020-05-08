@@ -1,8 +1,16 @@
 package com.lmqrpc.test;
 
 
+import com.lmqrpc.invoker.NettyConsumerPoolFactory;
 import com.lmqrpc.myservice.HelloService;
+import io.netty.channel.Channel;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.net.InetSocketAddress;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MainTestcli {
     public static void main(String[] args) {
@@ -15,6 +23,21 @@ public class MainTestcli {
          }
 
        lmqcontext.close();
+
+        ConcurrentHashMap<InetSocketAddress, ArrayBlockingQueue<Channel>> channelpoolMap=NettyConsumerPoolFactory.getSingleton().getchannelpoolMap();
+        //依次关闭
+        for(Map.Entry entry: channelpoolMap.entrySet())
+        {
+            ArrayBlockingQueue<Channel>qu= (ArrayBlockingQueue<Channel>) entry.getValue();
+            Iterator<Channel> itr=qu.iterator();
+           while(itr.hasNext())
+           {
+               itr.next().close();
+           }
+
+
+
+        }
 
         System.exit(0);
     }
