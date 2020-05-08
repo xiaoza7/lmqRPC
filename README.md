@@ -1,5 +1,6 @@
 # lmqRPC
 分布式RPC框架， 使用zookeeper作为注册中心
+其中部分设计及code参考借鉴其他人的做法，本特色如下
 
 1,与spring集成，使用importBeandefinitionRegistarar引入netty 消费客户端接口消费，类似mybatis的mapper，支持注解调用，免去配置spring的xml，
 2，自定义beanPostProcessor提供服务启动与注册，netty作为服务提供，与spring集成
@@ -7,15 +8,15 @@
 
 运行：
 首先起本机zookeeper(port:2181),
-其中myservice包是配置service,
+其中myservice，myserviceImpl包是配置service,
 运行test包的例子
 
 
 特点：
   基于注解的服务提供方启动与注册，注解的服务消费，免去xml的配置
 
- 不足：
-    在服务消费时较慢，仍需完善
+不足：
+    在服务消费第一次调用时较慢，基于注解的配置需要熟悉，仍需完善
 
 
 测试截图：
