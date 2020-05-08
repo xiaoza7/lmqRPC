@@ -67,7 +67,7 @@ public class LmqRpcImportBeanDefinitionRegistrar implements ImportBeanDefinition
                    canclassname=a2[0].getName();
                }
 
-               // BeanDefinitionBuilder beanDefinitionBuilder= BeanDefinitionBuilder.genericBeanDefinition(userMapper.getClass()); //实际无法获取代理类信息，使用factorybean
+              //取代理类信息，使用factorybean
                BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(canclassname);
                GenericBeanDefinition beanDefinition = (GenericBeanDefinition) beanDefinitionBuilder.getBeanDefinition();
 
