@@ -91,6 +91,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
                 if (initflag == false) {
+                    //待优化，需要把netty初始化移动到invoke之前，在代理对象实例初始化或之前完成
                     initNettyProxy();
                 }
 
