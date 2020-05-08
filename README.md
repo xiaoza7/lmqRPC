@@ -17,7 +17,7 @@
 
 不足：
     在服务消费第一次调用时较慢，基于注解的配置需要熟悉，仍需完善
-
+后续功能待完善中，，，，，，，
 
 测试截图：
 ![Image text](https://github.com/xiaoza7/lmqRPC/blob/master/src/test/java/testservice/mb.png)

@@ -25,7 +25,7 @@ public class MainTestcli {
        lmqcontext.close();
 
         ConcurrentHashMap<InetSocketAddress, ArrayBlockingQueue<Channel>> channelpoolMap=NettyConsumerPoolFactory.getSingleton().getchannelpoolMap();
-        //依次关闭
+        //依次关闭channel, 此时bootgrap还没关闭，为了关闭cli,暂不处理
         for(Map.Entry entry: channelpoolMap.entrySet())
         {
             ArrayBlockingQueue<Channel>qu= (ArrayBlockingQueue<Channel>) entry.getValue();
