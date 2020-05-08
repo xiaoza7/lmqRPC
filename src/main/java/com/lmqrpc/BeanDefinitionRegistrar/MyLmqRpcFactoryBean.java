@@ -44,7 +44,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                    String remoteAppKey;
                    String groupName;
                    private ExecutorService fixedThreadPool = null;
-                //   public void initNettyProxy() throws Exception
+                //  public void initNettyProxy() throws Exception
                    {
                        //根据class上面的注解获取注解属性value
                        Class c=null;

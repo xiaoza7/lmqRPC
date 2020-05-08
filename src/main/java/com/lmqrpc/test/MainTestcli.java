@@ -32,14 +32,22 @@ public class MainTestcli {
             Iterator<Channel> itr=qu.iterator();
            while(itr.hasNext())
            {
-               itr.next().close();
+               try {
+                   Channel channel=itr.next();
+                   if(!channel.isActive()){
+                      channel.close();
+                   }
+               }catch (Exception e)
+               {
+                   e.printStackTrace();
+               }
            }
 
 
 
         }
 
-        System.exit(0);
+       // System.exit(0);
     }
 
 
