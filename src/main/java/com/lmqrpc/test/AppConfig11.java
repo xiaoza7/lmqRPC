@@ -1,4 +1,4 @@
-package com.lmqrpc.myservice;
+package com.lmqrpc.test;
 
 
 
@@ -9,9 +9,8 @@ import org.springframework.context.annotation.Import;
 
 
 @Configuration
-@ComponentScan("com.lmqrpc.myservice")
-@Import( LmqRpcImportBeanDefinitionRegistrar.class)
-public class AppConfig12 {
+@ComponentScan({"com.lmqrpc.BeanDefinitionRegistrar","com.lmqrpc.myserviceImpl"})
+public class AppConfig11 {
 
 
 

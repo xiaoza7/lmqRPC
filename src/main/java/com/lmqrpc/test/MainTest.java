@@ -1,7 +1,6 @@
 package com.lmqrpc.test;
 
 
-import com.lmqrpc.myservice.AppConfig11;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class MainTest {

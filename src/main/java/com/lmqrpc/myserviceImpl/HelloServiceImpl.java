@@ -1,7 +1,8 @@
-package com.lmqrpc.myservice;
+package com.lmqrpc.myserviceImpl;
 
 
 import com.lmqrpc.entity.RpcService;
+import com.lmqrpc.myservice.HelloService;
 import org.springframework.stereotype.Component;
 
 @Component
