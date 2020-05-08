@@ -44,7 +44,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
                    String remoteAppKey;
                    String groupName;
                    private ExecutorService fixedThreadPool = null;
-                   public void initNettyProxy() throws Exception
+                //   public void initNettyProxy() throws Exception
                    {
                        //根据class上面的注解获取注解属性value
                        Class c=null;
@@ -90,10 +90,7 @@ public class MyLmqRpcFactoryBean implements FactoryBean {
 
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-                if (initflag == false) {
-                    //待优化，需要把netty初始化移动到invoke之前，在代理对象实例初始化或之前完成
-                    initNettyProxy();
-                }
+
 
                 try {
                     //构建用来发起调用的线程池
