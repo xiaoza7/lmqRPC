@@ -31,7 +31,7 @@ public class NettyConsumerPoolFactory {
 
     private static final ConcurrentHashMap<InetSocketAddress, ArrayBlockingQueue<Channel>> channelpoolMap=new ConcurrentHashMap<InetSocketAddress, ArrayBlockingQueue<Channel>>();
 
-    private static final int connectionsize=1000;
+    private static final int connectionsize=50;
 
     private List<ReServiceProvider> serviceProviderList=new ArrayList<ReServiceProvider>();
 
