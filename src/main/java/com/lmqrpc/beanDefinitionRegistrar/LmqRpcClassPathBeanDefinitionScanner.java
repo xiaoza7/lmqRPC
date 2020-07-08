@@ -1,4 +1,4 @@
-package com.lmqrpc.BeanDefinitionRegistrar;
+package com.lmqrpc.beanDefinitionRegistrar;
 
 
 

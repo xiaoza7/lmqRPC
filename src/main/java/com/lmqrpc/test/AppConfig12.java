@@ -2,7 +2,7 @@ package com.lmqrpc.test;
 
 
 
-import com.lmqrpc.BeanDefinitionRegistrar.LmqRpcImportBeanDefinitionRegistrar;
+import com.lmqrpc.beanDefinitionRegistrar.LmqRpcImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

@@ -1,4 +1,4 @@
-package com.lmqrpc.BeanDefinitionRegistrar;
+package com.lmqrpc.beanDefinitionRegistrar;
 
 
 import com.alibaba.fastjson.JSON;
@@ -12,9 +12,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.*;
 
