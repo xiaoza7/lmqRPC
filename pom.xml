@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>5.1.13.RELEASE</version>
+            <version>5.3.18</version>
         </dependency>
 
         <!-- pring IOC的基础实现，包含访问配置文件、创建和管理bean等 -->
